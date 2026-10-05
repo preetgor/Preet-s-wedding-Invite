@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Preet &amp; Pankti Wedding Invitation</title>
+<meta name="description" content="Preet & Pankti are getting married — join us in celebration.">
+<meta property="og:title" content="Preet & Pankti Wedding Invitation">
+<meta property="og:description" content="Tap to open the wedding invitation of Preet & Pankti.">
+<meta property="og:type" content="website">
+<meta name="twitter:title" content="Preet & Pankti Wedding Invitation">
+<link rel="preload" as="image" href="assets/cover.jpg">
+<style>
+:root{
+  --maroon:#5e0f16; --maroon-deep:#420a10; --gold:#c9a24b; --gold-soft:#e6c87a;
+  --cream:#f8f1e2; --cream-dim:#efe3cb; --ink:#3a2a1e;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;background:var(--maroon-deep)}
+body{font-family:Georgia,'Times New Roman',serif;color:var(--cream);
+  position:fixed;inset:0;width:100%;overscroll-behavior:none;user-select:none;-webkit-user-select:none}
+/* soft blurred ambient backdrop drawn from each artwork's tones */
+#ambient{position:fixed;inset:-60px;z-index:0;background-size:cover;background-position:center;
+  filter:blur(46px) saturate(1.25) brightness(.82);transform:scale(1.05);
+  transition:opacity .5s ease;background-color:var(--maroon-deep)}
+#ambient.fade{opacity:0}
+/* cover-only side panels: white, pillar strip cropped from the cover artwork */
+.coverside{position:fixed;top:0;bottom:0;z-index:1;background-color:#fff;background-repeat:no-repeat}
+.coverside[hidden]{display:none}
+#coverSideL{background-image:url('assets/cover-side-l.jpg');background-size:auto 100%;background-position:right center}
+#coverSideR{background-image:url('assets/cover-side-r.jpg');background-size:auto 100%;background-position:left center}
+.view{position:fixed;inset:0;z-index:2;display:flex;align-items:center;justify-content:center}
+.view[hidden]{display:none}
+/* page figure shrink-wraps the artwork so % hotspots always align */
+.pagefigure{position:relative;margin:auto;max-width:100vw;max-height:100dvh;
+  box-shadow:0 18px 60px rgba(0,0,0,.45);background:#00000010}
+.pagefigure img,.pagefigure picture{display:block;width:100%;height:100%}
+.pagefigure img{object-fit:fill;touch-action:none}
+.hotspot{position:absolute;display:block;cursor:pointer;border-radius:8px}
+.hotspot:active{background:rgba(201,162,75,.25)}
+/* cover open hotspot is invisible */
+#coverOpen{background:transparent}
+/* ---------- chrome ---------- */
+.chrome{position:fixed;z-index:5;display:flex;align-items:center}
+/* very small right-side dot rail: ~100px tall, 8 dots of ~3px */
+#dots{right:8px;top:50%;transform:translateY(-50%);flex-direction:column;
+  background:rgba(30,6,9,.45);border:1px solid rgba(201,162,75,.4);border-radius:999px;
+  padding:8px 5px;gap:9px}
+#dots button{width:3px;height:3px;border-radius:50%;border:none;
+  background:rgba(230,200,122,.45);cursor:pointer;padding:0}
+#dots button.on{background:var(--gold-soft);box-shadow:0 0 6px var(--gold-soft)}
+.navbtn{position:fixed;top:50%;transform:translateY(-50%);z-index:5;width:44px;height:44px;border-radius:50%;
+  border:1px solid rgba(201,162,75,.65);background:rgba(30,6,9,.55);color:var(--gold-soft);
+  font-size:20px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center}
+#prevBtn{left:10px}#nextBtn{right:10px}
+.navbtn:disabled{opacity:.25;cursor:default}
+.topbar{position:fixed;top:0;left:0;right:0;z-index:5;display:flex;justify-content:space-between;
+  align-items:center;padding:calc(10px + env(safe-area-inset-top)) 12px 10px;pointer-events:none}
+.topbar button{pointer-events:auto}
+.pillbtn{border:1px solid rgba(201,162,75,.65);background:rgba(30,6,9,.55);color:var(--gold-soft);
+  border-radius:999px;padding:9px 16px;font-family:inherit;font-size:14px;letter-spacing:.06em;cursor:pointer}
+.pillbtn:active{background:rgba(201,162,75,.3)}
+/* ---------- loader ---------- */
+#loader{position:fixed;inset:0;z-index:40;background:var(--cream);display:flex;align-items:center;
+  justify-content:center;flex-direction:column;gap:18px}
+#loader[hidden]{display:none}
+#loader .ring{width:46px;height:46px;border-radius:50%;border:4px solid var(--cream-dim);
+  border-top-color:var(--maroon);animation:spin 1s linear infinite}
+#loader p{color:var(--maroon);letter-spacing:.25em;font-size:12px}
+@keyframes spin{to{transform:rotate(360deg)}}
+/* ---------- RSVP dialog ---------- */
+#rsvpWrap{position:fixed;inset:0;z-index:30;display:flex;align-items:center;justify-content:center;
+  background:rgba(25,5,8,.6);backdrop-filter:blur(3px);padding:20px}
+#rsvpWrap[hidden]{display:none}
+#rsvpCard{background:linear-gradient(160deg,#fffdf6,var(--cream));color:var(--ink);border-radius:18px;
+  max-width:380px;width:100%;padding:30px 26px 26px;text-align:center;position:relative;
+  border:2px solid var(--gold);box-shadow:0 24px 70px rgba(0,0,0,.5)}
+#rsvpCard h2{color:var(--maroon);font-size:26px;margin-bottom:6px;font-weight:normal}
+#rsvpCard .sub{font-size:14px;color:#7a5c3e;margin-bottom:20px;font-style:italic}
+#rsvpCard .opt{display:block;width:100%;margin:10px 0;padding:14px;border-radius:12px;cursor:pointer;
+  font-family:inherit;font-size:17px;letter-spacing:.03em;border:1px solid var(--gold);
+  background:var(--maroon);color:var(--cream);transition:transform .12s ease}
+#rsvpCard .opt:active{transform:scale(.97)}
+#rsvpCard .opt.ghost{background:transparent;color:var(--maroon)}
+#rsvpClose{position:absolute;top:10px;right:14px;border:none;background:none;font-size:22px;
+  color:#9a7b52;cursor:pointer}
+/* ---------- social page: temple artwork bg + soft ivory wash ---------- */
+.socialpage{position:relative;margin:auto;max-width:100vw;max-height:100dvh;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
+  padding:34px 26px;gap:14px;overflow:hidden;color:var(--ink);
+  background:url('assets/social-bg.jpg') center/contain no-repeat}
+.socialpage::before{content:"";position:absolute;inset:0;pointer-events:none;
+  background:rgba(248,241,226,.62)}
+.socialpage h2{font-size:clamp(26px,7vw,40px);font-weight:normal;color:var(--maroon);
+  letter-spacing:.04em;z-index:1}
+.socialpage .tag{font-size:clamp(18px,5vw,26px);letter-spacing:.05em;z-index:1;color:var(--cream);
+  border:1px solid var(--gold);border-radius:999px;padding:8px 20px;background:rgba(94,15,22,.85)}
+.socialpage .line{font-size:clamp(13px,3.6vw,16px);font-style:italic;max-width:34ch;z-index:1}
+.qrrow{display:flex;gap:18px;z-index:1;justify-content:center;flex-wrap:wrap}
+.qrrow a{display:block;width:clamp(120px,34vw,180px);border-radius:14px;overflow:hidden;
+  border:2px solid var(--gold);box-shadow:0 10px 26px rgba(0,0,0,.4);background:#fff;text-decoration:none}
+.qrrow img{display:block;width:100%;height:auto}
+.qrrow span{display:block;font-size:12px;color:var(--ink);background:var(--cream);padding:6px;letter-spacing:.03em}
+.socialpage .note{font-size:clamp(12px,3.4vw,14px);color:var(--maroon);z-index:1;max-width:36ch;font-style:italic}
+@media (max-height:500px){.socialpage{gap:8px;padding:18px}}
+</style>
+</head>
+<body>
+<div id="ambient"></div>
+<div id="coverSideL" class="coverside" hidden></div>
+<div id="coverSideR" class="coverside" hidden></div>
+
+<div id="loader"><div class="ring"></div><p>OPENING</p></div>
+
+<!-- locked cover -->
+<section id="coverView" class="view" aria-label="Wedding invitation cover">
+  <div class="pagefigure" id="coverFig">
+    <picture>
+      <source srcset="assets/cover.webp" type="image/webp">
+      <img id="coverImg" src="assets/cover.jpg" alt="Preet and Pankti wedding invitation cover" fetchpriority="high">
+    </picture>
+    <a class="hotspot" id="coverOpen" aria-label="Open the invite"></a>
+  </div>
+</section>
+
+<!-- inside pages -->
+<main id="bookView" class="view" hidden aria-label="Invitation pages">
+  <div class="pagefigure" id="pageFig" style="display:none">
+    <img id="pageImg" alt="Invitation page" decoding="async">
+    <div id="hotspots"></div>
+  </div>
+  <div class="socialpage" id="socialPage" style="display:none">
+    <h2>Share the love</h2>
+    <p class="line">Post your favourite moments from our celebrations with</p>
+    <div class="tag">#preetkiShaadi</div>
+    <p class="line">Tag us so we can celebrate every memory with you.</p>
+    <div class="qrrow">
+      <a href="https://instagram.com/geeky.preet" target="_blank" rel="noopener" aria-label="Preet on Instagram">
+        <img src="assets/qr-preet.jpg" alt="Preet's Instagram QR code" loading="lazy"><span>@geeky.preet</span>
+      </a>
+      <a href="https://instagram.com/thepenguinplums" target="_blank" rel="noopener" aria-label="Pankti on Instagram">
+        <img src="assets/qr-pankti.jpg" alt="Pankti's Instagram QR code" loading="lazy"><span>@thepenguinplums</span>
+      </a>
+    </div>
+    <p class="note">Come back after the function to collect your photos and relive the moments we shared.</p>
+  </div>
+</main>
+
+<div class="topbar" id="topbar" hidden>
+  <button class="pillbtn" id="homeBtn">⌂ Home</button>
+  <button class="pillbtn" id="muteBtn" aria-label="Mute music">♪ Mute</button>
+</div>
+<button class="navbtn" id="prevBtn" hidden aria-label="Previous page">‹</button>
+<button class="navbtn" id="nextBtn" hidden aria-label="Next page">›</button>
+<nav class="chrome" id="dots" hidden aria-label="Pages"></nav>
+
+<!-- RSVP dialog -->
+<div id="rsvpWrap" hidden>
+  <div id="rsvpCard" role="dialog" aria-label="RSVP">
+    <button id="rsvpClose" aria-label="Close">×</button>
+    <h2>Will you join us?</h2>
+    <p class="sub">Your response goes straight to our WhatsApp</p>
+    <button class="opt" data-r="coming">Coming</button>
+    <button class="opt ghost" data-r="decline">Won't make it</button>
+    <button class="opt ghost" data-r="tentative">Tentative</button>
+  </div>
+</div>
+
+<audio id="music" loop preload="none" src="assets/music.mp3"></audio>
+<script>
+(function(){
+"use strict";
+/* hotspot boxes are [left%, top%, width%, height%] in the artwork's own frame */
+var MAP_TULSI_BANQUET="https://maps.app.goo.gl/schPkwuTaiJpbPwz9";
+var MAP_HOME="https://maps.app.goo.gl/LMNSHLQn8zRsEciQ6";
+var MAP_FARM="https://maps.app.goo.gl/iy7CLD5hhrat8UKPA";
+var MAP_RSVP="https://maps.app.goo.gl/46Jq8jyJ87rhkbkH6";
+var COVER_AR=1118/2047;
+var PAGES=[
+ {img:"assets/grah-shanti.jpg", webp:"assets/grah-shanti.webp", amb:"assets/amb-grah-shanti.jpg",
+  ar:1136/2080, label:"Grah Shanti",
+  hs:[{b:[33,53.8,34,4.2], href:MAP_TULSI_BANQUET},
+      {b:[40.5,58.0,19,3.2], href:MAP_TULSI_BANQUET}]},
+ {img:"assets/haldi.jpg", webp:"assets/haldi.webp", amb:"assets/amb-haldi.jpg",
+  ar:1136/1894, label:"Haldi",
+  hs:[{b:[36.7,53.3,31.1,10.2], href:MAP_TULSI_BANQUET}]},
+ {img:"assets/sangeet.jpg", webp:"assets/sangeet.webp", amb:"assets/amb-sangeet.jpg",
+  ar:1136/1894, label:"Sangeet",
+  hs:[{b:[37.0,52.3,32.0,10.6], href:MAP_TULSI_BANQUET}]},
+ {img:"assets/baraat.jpg", webp:"assets/baraat.webp", amb:"assets/amb-baraat.jpg",
+  ar:1136/1894, label:"Baraat",
+  hs:[{b:[39.5,41.1,19.5,8.0], href:MAP_HOME}]},
+ {img:"assets/wedding-ceremony.jpg", webp:"assets/wedding-ceremony.webp", amb:"assets/amb-wedding-ceremony.jpg",
+  ar:1136/2080, label:"Wedding Ceremony",
+  hs:[{b:[34,59.8,32,2.5], href:MAP_FARM},
+      {b:[40.5,61.8,19,3.2], href:MAP_FARM}]},
+ {img:"assets/our-families.jpg", webp:"assets/our-families.webp", amb:"assets/amb-our-families.jpg",
+  ar:1136/1894, label:"Our Families", hs:[]},
+ {custom:"social", amb:"assets/amb-social-bg.jpg", ar:1344/1728, label:"Social Media"},
+ {img:"assets/rsvp.jpg", webp:"assets/rsvp.webp", amb:"assets/amb-rsvp.jpg",
+  ar:1136/1894, label:"RSVP",
+  hs:[
+   {b:[32.5,29.0,41.5,7.7], act:"rsvp"},
+   {b:[45.4,49.3,15.3,3.6], href:MAP_RSVP},
+   {b:[39.5,63.4,29.5,2.9], href:"https://wa.me/918460578950"},
+   {b:[39.5,68.9,29.5,2.9], href:"https://wa.me/919925834210"}
+  ]}
+];
+var WA_NUM="918460578950";
+var WA_MSG={
+ coming:"Hi Preet & Pankti! We are coming to your wedding!",
+ tentative:"Hi Preet & Pankti! We are tentative about attending your wedding.",
+ decline:"Hi Preet & Pankti! We won't be able to make it to your wedding."
+};
+
+var $=function(id){return document.getElementById(id)};
+var ambient=$("ambient"), loader=$("loader"),
+    coverView=$("coverView"), bookView=$("bookView"),
+    pageFig=$("pageFig"), pageImg=$("pageImg"), hotspotBox=$("hotspots"),
+    socialPage=$("socialPage"), dots=$("dots"),
+    prevBtn=$("prevBtn"), nextBtn=$("nextBtn"),
+    topbar=$("topbar"), homeBtn=$("homeBtn"), muteBtn=$("muteBtn"),
+    rsvpWrap=$("rsvpWrap"), music=$("music"),
+    sideL=$("coverSideL"), sideR=$("coverSideR");
+
+var idx=0, opened=false, muted=false, wasPlaying=false;
+
+/* fit a shrink-wrapped frame to the viewport for a given aspect ratio */
+function fitFrame(el, ar){
+  var vw=window.innerWidth, vh=window.innerHeight, w, h;
+  if(vw/vh > ar){ h=vh; w=vh*ar; } else { w=vw; h=vw/ar; }
+  el.style.width=w+"px"; el.style.height=h+"px";
+}
+/* cover-only side panels: white, pillar strips cropped from the cover artwork */
+function layoutCoverSides(){
+  var wide=(window.innerWidth/window.innerHeight) > COVER_AR;
+  var show=!coverView.hidden && wide;
+  sideL.hidden=!show; sideR.hidden=!show;
+  if(show){
+    var figW=parseFloat($("coverFig").style.width)||0;
+    var pw=Math.max(0,(window.innerWidth-figW)/2);
+    sideL.style.left="0px"; sideL.style.width=pw+"px";
+    sideR.style.right="0px"; sideR.style.width=pw+"px";
+  }
+}
+function fitAll(){
+  fitFrame($("coverFig"), COVER_AR);
+  var p=PAGES[idx];
+  if(p.custom){ fitFrame(socialPage, p.ar); }
+  else { fitFrame(pageFig, p.ar); }
+  layoutCoverSides();
+}
+window.addEventListener("resize", fitAll);
+window.addEventListener("orientationchange", function(){ setTimeout(fitAll, 120); });
+
+function setAmbient(src){
+  ambient.classList.add("fade");
+  setTimeout(function(){
+    ambient.style.backgroundImage="url('"+src+"')";
+    ambient.classList.remove("fade");
+  }, 160);
+}
+
+/* ---------- dots ---------- */
+PAGES.forEach(function(p,i){
+  var d=document.createElement("button");
+  d.setAttribute("aria-label", p.label);
+  d.addEventListener("click", function(){ go(i); });
+  dots.appendChild(d);
+});
+function paintDots(){
+  var ds=dots.children;
+  for(var i=0;i<ds.length;i++) ds[i].classList.toggle("on", i===idx);
+}
+
+/* ---------- page render ---------- */
+var preloaded={};
+function preload(i){
+  if(i<0||i>=PAGES.length||PAGES[i].custom||preloaded[i]) return;
+  preloaded[i]=1; var im=new Image(); im.src=PAGES[i].webp;
+}
+function setPageImage(p){
+  pageImg.dataset.fbk="";
+  pageImg.onload=function(){ pageImg.onload=null; };
+  pageImg.onerror=function(){
+    if(!pageImg.dataset.fbk){ pageImg.dataset.fbk="1"; pageImg.src=p.img; }
+    else { pageImg.onerror=null; }
+  };
+  pageImg.src=p.webp;
+}
+function show(i){
+  idx=(i+PAGES.length)%PAGES.length;
+  var p=PAGES[idx];
+  resetZoom();
+  if(p.custom){
+    pageFig.style.display="none"; socialPage.style.display="flex";
+    fitFrame(socialPage,p.ar); setAmbient(p.amb);
+  }else{
+    socialPage.style.display="none"; pageFig.style.display="block";
+    fitFrame(pageFig,p.ar);
+    setPageImage(p); pageImg.alt=p.label;
+    setAmbient(p.amb);
+    hotspotBox.innerHTML="";
+    p.hs.forEach(function(h){
+      var a=document.createElement("a");
+      a.className="hotspot";
+      a.style.left=h.b[0]+"%"; a.style.top=h.b[1]+"%";
+      a.style.width=h.b[2]+"%"; a.style.height=h.b[3]+"%";
+      if(h.href){ a.href=h.href; a.target="_blank"; a.rel="noopener"; }
+      else if(h.act==="rsvp"){ a.href="#"; a.addEventListener("click", function(e){ e.preventDefault(); openRsvp(); }); }
+      hotspotBox.appendChild(a);
+    });
+  }
+  paintDots();
+  prevBtn.disabled=(idx===0); nextBtn.disabled=(idx===PAGES.length-1);
+  preload(idx+1); preload(idx-1);
+}
+var coolUntil=0;
+function go(i){
+  var now=Date.now();
+  if(now<coolUntil) return;
+  coolUntil=now+450;
+  show(i);
+}
+function step(d){ go(idx+d); }
+
+/* ---------- open / home ---------- */
+function openInvite(){
+  if(opened) return; opened=true;
+  loader.hidden=false;
+  coverView.hidden=true;
+  layoutCoverSides();
+  bookView.hidden=false;
+  topbar.hidden=false; dots.hidden=false;
+  prevBtn.hidden=false; nextBtn.hidden=false;
+  show(0);
+  fitAll();
+  /* start music on the user's tap gesture */
+  music.play().then(function(){ wasPlaying=true; }).catch(function(){});
+  if(pageImg.complete) loader.hidden=true;
+  else { pageImg.onload=function(){ loader.hidden=true; }; pageImg.onerror=function(){ loader.hidden=true; }; }
+  setTimeout(function(){ loader.hidden=true; }, 4000); /* never trap the user */
+}
+function goHome(){
+  opened=false; idx=0;
+  try{ music.pause(); }catch(e){}
+  music.currentTime=0; wasPlaying=false;
+  bookView.hidden=true; topbar.hidden=true; dots.hidden=true;
+  prevBtn.hidden=true; nextBtn.hidden=true;
+  closeRsvp();
+  coverView.hidden=false;
+  setAmbient("assets/amb-cover.jpg");
+  fitAll();
+}
+$("coverOpen").addEventListener("click", function(e){ e.preventDefault(); openInvite(); });
+homeBtn.addEventListener("click", goHome);
+
+/* cover hotspot geometry over the baked-in "Click here to Open the Invite" button */
+(function(){ var c=$("coverOpen"); c.style.left="32%"; c.style.top="82.5%";
+  c.style.width="37%"; c.style.height="7%"; })();
+
+/* ---------- controls ---------- */
+prevBtn.addEventListener("click", function(){ step(-1); });
+nextBtn.addEventListener("click", function(){ step(1); });
+document.addEventListener("keydown", function(e){
+  if(!opened||!rsvpWrap.hidden) return;
+  if(e.key==="ArrowRight") step(1);
+  else if(e.key==="ArrowLeft") step(-1);
+  else if(e.key==="Home") goHome();
+});
+var lastWheel=0;
+document.addEventListener("wheel", function(e){
+  if(!opened||!rsvpWrap.hidden) return;
+  var now=Date.now(); if(now-lastWheel<900) return;
+  if(Math.abs(e.deltaY)>Math.abs(e.deltaX)&&Math.abs(e.deltaY)>12){
+    lastWheel=now; step(e.deltaY>0?1:-1);
+  }
+},{passive:true});
+
+/* ---------- touch: swipe paging + pinch zoom ---------- */
+var touchTarget=$("bookView");
+var tStart=null, pinch=null, scale=1, px=0, py=0;
+function imgEl(){ var p=PAGES[idx]; return p.custom?null:pageImg; }
+function applyZoom(){
+  var im=imgEl(); if(!im) return;
+  im.style.transform="scale("+scale+") translate("+px+"px,"+py+"px)";
+}
+function resetZoom(){ scale=1; px=0; py=0; var im=imgEl(); if(im) im.style.transform=""; }
+touchTarget.addEventListener("touchstart", function(e){
+  if(e.touches.length===2){
+    pinch={d:Math.hypot(e.touches[0].clientX-e.touches[1].clientX,
+                        e.touches[0].clientY-e.touches[1].clientY), s:scale};
+    tStart=null;
+  }else if(e.touches.length===1){
+    var t=e.touches[0];
+    tStart={x:t.clientX, y:t.clientY, t:Date.now(), moved:false};
+  }
+},{passive:true});
+touchTarget.addEventListener("touchmove", function(e){
+  var im=imgEl();
+  if(pinch&&e.touches.length===2&&im){
+    e.preventDefault();
+    var d=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,
+                     e.touches[0].clientY-e.touches[1].clientY);
+    scale=Math.min(5,Math.max(1, pinch.s*d/pinch.d));
+    applyZoom();
+  }else if(tStart&&e.touches.length===1){
+    var t=e.touches[0];
+    if(Math.abs(t.clientX-tStart.x)>12||Math.abs(t.clientY-tStart.y)>12) tStart.moved=true;
+    if(scale>1&&im){ /* pan while zoomed */
+      e.preventDefault();
+      px+=(t.clientX-(tStart.px||t.clientX))/scale;
+      py+=(t.clientY-(tStart.py||t.clientY))/scale;
+      tStart.px=t.clientX; tStart.py=t.clientY;
+      applyZoom();
+    }
+  }
+},{passive:false});
+touchTarget.addEventListener("touchend", function(e){
+  if(pinch){ pinch=null; if(scale<=1.02) resetZoom(); return; }
+  if(tStart){
+    var dt=Date.now()-tStart.t;
+    var dx=(e.changedTouches[0].clientX-tStart.x);
+    if(scale>1){ tStart=null; return; } /* panning, not paging */
+    if(tStart.moved&&Math.abs(dx)>60&&Math.abs(dx)>Math.abs(e.changedTouches[0].clientY-tStart.y)&&dt<800){
+      step(dx<0?1:-1);
+    }
+    tStart=null;
+  }
+});
+/* double-tap resets zoom */
+var lastTap=0;
+touchTarget.addEventListener("touchend", function(){
+  var now=Date.now();
+  if(now-lastTap<320&&scale>1) resetZoom();
+  lastTap=now;
+});
+
+/* ---------- music ---------- */
+muteBtn.addEventListener("click", function(){
+  muted=!muted; music.muted=muted;
+  muteBtn.textContent=muted?"✕ Muted":"♪ Mute";
+});
+document.addEventListener("visibilitychange", function(){
+  if(document.hidden){ wasPlaying=!music.paused&&!muted; music.pause(); }
+  else if(wasPlaying&&opened&&!muted){ music.play().catch(function(){}); }
+});
+
+/* ---------- RSVP ---------- */
+function openRsvp(){ rsvpWrap.hidden=false; }
+function closeRsvp(){ rsvpWrap.hidden=true; }
+$("rsvpClose").addEventListener("click", closeRsvp);
+rsvpWrap.addEventListener("click", function(e){ if(e.target===rsvpWrap) closeRsvp(); });
+document.addEventListener("keydown", function(e){ if(e.key==="Escape") closeRsvp(); });
+var opts=document.querySelectorAll("#rsvpCard .opt");
+for(var i=0;i<opts.length;i++){
+  opts[i].addEventListener("click", function(){
+    var txt=WA_MSG[this.getAttribute("data-r")];
+    window.open("https://wa.me/"+WA_NUM+"?text="+encodeURIComponent(txt), "_blank");
+    closeRsvp();
+  });
+}
+
+/* ---------- init ---------- */
+setAmbient("assets/amb-cover.jpg");
+fitAll();
+var co=$("coverImg");
+if(co.complete){ fitAll(); } else { co.onload=fitAll; }
+})();
+</script>
+</body>
+</html>
