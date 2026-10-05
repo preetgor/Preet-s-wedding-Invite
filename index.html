@@ -72,6 +72,7 @@ body{font-family:Georgia,'Times New Roman',serif;color:var(--cream);
 #rsvpWrap{position:fixed;inset:0;z-index:30;display:flex;align-items:center;justify-content:center;
   background:rgba(25,5,8,.6);backdrop-filter:blur(3px);padding:20px}
 #rsvpWrap[hidden]{display:none}
+.view[hidden],.topbar[hidden],.navbtn[hidden],.chrome[hidden]{display:none}
 #rsvpCard{background:linear-gradient(160deg,#fffdf6,var(--cream));color:var(--ink);border-radius:18px;
   max-width:380px;width:100%;padding:30px 26px 26px;text-align:center;position:relative;
   border:2px solid var(--gold);box-shadow:0 24px 70px rgba(0,0,0,.5)}
@@ -178,7 +179,7 @@ var MAP_RSVP="https://maps.app.goo.gl/46Jq8jyJ87rhkbkH6";
 var COVER_AR=1118/2047;
 var PAGES=[
  {img:"assets/grah-shanti.jpg", webp:"assets/grah-shanti.webp", amb:"assets/amb-grah-shanti.jpg",
-  ar:1136/2080, label:"Grah Shanti",
+  ar:1136/1899, label:"Grah Shanti",
   hs:[{b:[33,53.8,34,4.2], href:MAP_TULSI_BANQUET},
       {b:[40.5,58.0,19,3.2], href:MAP_TULSI_BANQUET}]},
  {img:"assets/haldi.jpg", webp:"assets/haldi.webp", amb:"assets/amb-haldi.jpg",
@@ -191,7 +192,7 @@ var PAGES=[
   ar:1136/1894, label:"Baraat",
   hs:[{b:[39.5,41.1,19.5,8.0], href:MAP_HOME}]},
  {img:"assets/wedding-ceremony.jpg", webp:"assets/wedding-ceremony.webp", amb:"assets/amb-wedding-ceremony.jpg",
-  ar:1136/2080, label:"Wedding Ceremony",
+  ar:1136/1899, label:"Wedding Ceremony",
   hs:[{b:[34,59.8,32,2.5], href:MAP_FARM},
       {b:[40.5,61.8,19,3.2], href:MAP_FARM}]},
  {img:"assets/our-families.jpg", webp:"assets/our-families.webp", amb:"assets/amb-our-families.jpg",
