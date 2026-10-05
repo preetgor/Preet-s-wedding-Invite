@@ -465,7 +465,10 @@ for(var i=0;i<opts.length;i++){
 setAmbient("assets/amb-cover.jpg");
 fitAll();
 var co=$("coverImg");
-if(co.complete){ fitAll(); } else { co.onload=fitAll; }
+function coverReady(){ fitAll(); loader.hidden=true; }
+if(co.complete && co.naturalWidth){ coverReady(); }
+else { co.onload=coverReady; co.onerror=coverReady; }
+setTimeout(function(){ loader.hidden=true; }, 5000); /* failsafe: never trap on cover */
 })();
 </script>
 </body>
