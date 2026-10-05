@@ -43,32 +43,40 @@ body{font-family:Georgia,'Times New Roman',serif;color:var(--cream);
 /* ---------- nav (matches Muse published site) ---------- */
 #navbar{position:fixed;top:0;left:0;right:0;z-index:6;height:60px;background:#5a1c1e;
   display:flex;align-items:center;justify-content:center;box-shadow:0 2px 12px rgba(0,0,0,.35)}
-#navbar .links{display:flex;align-items:center;gap:26px;overflow-x:auto;white-space:nowrap;
+#navbar .links{display:flex;align-items:center;gap:8px;overflow-x:auto;white-space:nowrap;
   scrollbar-width:none;-ms-overflow-style:none;padding:0 66px 0 14px;max-width:100%}
 #navbar .links::-webkit-scrollbar{display:none}
 #navbar a{color:#f3e3bb;font-family:Georgia,'Times New Roman',serif;font-size:15px;letter-spacing:.03em;
-  text-decoration:none;cursor:pointer;padding:8px 2px;position:relative;flex:0 0 auto}
+  text-decoration:none;cursor:pointer;padding:9px 14px;border-radius:10px;position:relative;flex:0 0 auto;
+  transition:background-color .18s ease}
+#navbar a:not(.on):hover{background:#7a2a2d}
 #navbar a.on{color:#fff}
 #navbar a.on::after{content:"";position:absolute;left:2px;right:2px;bottom:3px;height:2px;
   background:var(--gold-soft);border-radius:2px}
 #musicBtn{position:fixed;top:10px;right:12px;z-index:7;width:40px;height:40px;border-radius:50%;
   background:rgba(35,8,10,.35);border:1.5px solid var(--gold);color:var(--gold-soft);font-size:18px;
   line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center}
+#musicBtn{transition:background-color .18s ease,transform .12s ease}
+#musicBtn:hover{background:rgba(201,162,75,.16)}
 #musicBtn:active{transform:scale(.93)}
 #musicBtn.muted{opacity:.5}
-#swipeHint{position:fixed;top:68px;left:0;right:0;z-index:5;text-align:center;pointer-events:none;
-  color:#f3e3bb;font-family:Georgia,serif;font-size:13px;letter-spacing:.05em;
-  text-shadow:0 1px 6px rgba(0,0,0,.65)}
+#swipeHint{position:fixed;left:50%;transform:translateX(-50%);bottom:26px;z-index:6;
+  background:rgba(90,28,30,.9);color:#f3e3bb;padding:10px 22px;border-radius:999px;
+  font-family:Georgia,serif;font-size:13px;letter-spacing:.05em;pointer-events:none;white-space:nowrap;
+  transition:opacity 1.2s ease}
+#swipeHint.gone{opacity:0}
 #dots{position:fixed;right:10px;top:50%;transform:translateY(-50%);z-index:6;display:flex;
   flex-direction:column;gap:10px;background:#f1e6cc;border-radius:999px;padding:13px 8px;
   box-shadow:0 2px 10px rgba(0,0,0,.28)}
-#dots button{width:6px;height:6px;border-radius:50%;border:0;padding:0;cursor:pointer;
-  background:#7a2a2d;opacity:.5}
-#dots button.on{opacity:1;transform:scale(1.4)}
+#dots button{width:7px;height:7px;border-radius:50%;padding:0;cursor:pointer;
+  background:transparent;border:1.5px solid #7a2a2d;opacity:.6;transition:all .18s ease}
+#dots button.on{background:#7a2a2d;border-color:#7a2a2d;opacity:1;transform:scale(1.25)}
 #bookView{padding-top:60px}
+#pageFig,#socialPage{transition:opacity .24s ease}
+#pageFig.fading,#socialPage.fading{opacity:0}
 @media (max-width:640px){
-  #navbar a{font-size:12.5px}
-  #navbar .links{gap:18px}
+  #navbar a{font-size:12.5px;padding:8px 10px}
+  #navbar .links{gap:4px}
 }
 /* ---------- loader ---------- */
 #loader{position:fixed;inset:0;z-index:40;background:var(--cream);display:flex;align-items:center;
@@ -99,7 +107,7 @@ body{font-family:Georgia,'Times New Roman',serif;color:var(--cream);
 .socialpage{position:relative;margin:auto;max-width:100vw;max-height:100dvh;
   display:flex;flex-direction:column;align-items:center;justify-content:space-evenly;text-align:center;
   padding:34px 26px;gap:14px;overflow:hidden;color:var(--ink);
-  background:url('assets/social-bg.jpg') center/contain no-repeat}
+  background:#f8f1e2 url('assets/social-bg.jpg') center/contain no-repeat}
 .socialpage::before{content:"";position:absolute;inset:0;pointer-events:none;
   background:rgba(248,241,226,.62)}
 .socialpage h2{font-size:clamp(26px,7vw,40px);font-weight:normal;color:var(--maroon);
@@ -333,8 +341,24 @@ function setPageImage(p){
   };
   pageImg.src=p.webp;
 }
+var firstShow=true;
 function show(i){
-  idx=(i+PAGES.length)%PAGES.length;
+  i=(i+PAGES.length)%PAGES.length;
+  if(i===idx&&!firstShow){ paintDots(); paintNav(); return; }
+  idx=i;
+  if(firstShow){ firstShow=false; renderPage(); return; }
+  var cur=(socialPage.style.display==="flex")?socialPage:pageFig;
+  cur.classList.add("fading");
+  setTimeout(function(){
+    var nxt=PAGES[idx].custom?socialPage:pageFig;
+    nxt.classList.add("fading");
+    renderPage();
+    void nxt.offsetWidth;
+    nxt.classList.remove("fading");
+    if(cur!==nxt) cur.classList.remove("fading");
+  },230);
+}
+function renderPage(){
   var p=PAGES[idx];
   resetZoom();
   if(p.custom){
@@ -376,7 +400,7 @@ function openInvite(){
   coverView.hidden=true;
   layoutCoverSides();
   bookView.hidden=false;
-  navbar.hidden=false; dots.hidden=false; swipeHint.hidden=false;
+  navbar.hidden=false; dots.hidden=false; swipeHint.hidden=false; pokeHint();
   show(0);
   fitAll();
   /* start music on the user's tap gesture */
@@ -390,6 +414,8 @@ function goHome(){
   try{ music.pause(); }catch(e){}
   music.currentTime=0; wasPlaying=false; setMuted(false);
   bookView.hidden=true; navbar.hidden=true; dots.hidden=true; swipeHint.hidden=true;
+  if(hintTimer){ clearTimeout(hintTimer); hintTimer=null; }
+  swipeHint.classList.remove("gone");
   closeRsvp();
   coverView.hidden=false;
   setAmbient("assets/amb-cover.jpg");
@@ -477,6 +503,12 @@ touchTarget.addEventListener("touchend", function(){
 });
 
 /* ---------- music ---------- */
+var hintTimer=null;
+function pokeHint(){
+  swipeHint.classList.remove("gone");
+  if(hintTimer) clearTimeout(hintTimer);
+  hintTimer=setTimeout(function(){ swipeHint.classList.add("gone"); },30000);
+}
 function setMuted(m){
   muted=m; music.muted=m;
   musicBtn.classList.toggle("muted", m);
