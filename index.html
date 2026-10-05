@@ -40,26 +40,36 @@ body{font-family:Georgia,'Times New Roman',serif;color:var(--cream);
 .hotspot:active{background:rgba(201,162,75,.25)}
 /* cover open hotspot is invisible */
 #coverOpen{background:transparent}
-/* ---------- chrome ---------- */
-.chrome{position:fixed;z-index:5;display:flex;align-items:center}
-/* very small right-side dot rail: ~100px tall, 8 dots of ~3px */
-#dots{right:8px;top:50%;transform:translateY(-50%);flex-direction:column;
-  background:rgba(30,6,9,.45);border:1px solid rgba(201,162,75,.4);border-radius:999px;
-  padding:8px 5px;gap:9px}
-#dots button{width:3px;height:3px;border-radius:50%;border:none;
-  background:rgba(230,200,122,.45);cursor:pointer;padding:0}
-#dots button.on{background:var(--gold-soft);box-shadow:0 0 6px var(--gold-soft)}
-.navbtn{position:fixed;top:50%;transform:translateY(-50%);z-index:5;width:44px;height:44px;border-radius:50%;
-  border:1px solid rgba(201,162,75,.65);background:rgba(30,6,9,.55);color:var(--gold-soft);
-  font-size:20px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center}
-#prevBtn{left:10px}#nextBtn{right:10px}
-.navbtn:disabled{opacity:.25;cursor:default}
-.topbar{position:fixed;top:0;left:0;right:0;z-index:5;display:flex;justify-content:space-between;
-  align-items:center;padding:calc(10px + env(safe-area-inset-top)) 12px 10px;pointer-events:none}
-.topbar button{pointer-events:auto}
-.pillbtn{border:1px solid rgba(201,162,75,.65);background:rgba(30,6,9,.55);color:var(--gold-soft);
-  border-radius:999px;padding:9px 16px;font-family:inherit;font-size:14px;letter-spacing:.06em;cursor:pointer}
-.pillbtn:active{background:rgba(201,162,75,.3)}
+/* ---------- nav (matches Muse published site) ---------- */
+#navbar{position:fixed;top:0;left:0;right:0;z-index:6;height:60px;background:#5a1c1e;
+  display:flex;align-items:center;justify-content:center;box-shadow:0 2px 12px rgba(0,0,0,.35)}
+#navbar .links{display:flex;align-items:center;gap:26px;overflow-x:auto;white-space:nowrap;
+  scrollbar-width:none;-ms-overflow-style:none;padding:0 66px 0 14px;max-width:100%}
+#navbar .links::-webkit-scrollbar{display:none}
+#navbar a{color:#f3e3bb;font-family:Georgia,'Times New Roman',serif;font-size:15px;letter-spacing:.03em;
+  text-decoration:none;cursor:pointer;padding:8px 2px;position:relative;flex:0 0 auto}
+#navbar a.on{color:#fff}
+#navbar a.on::after{content:"";position:absolute;left:2px;right:2px;bottom:3px;height:2px;
+  background:var(--gold-soft);border-radius:2px}
+#musicBtn{position:fixed;top:10px;right:12px;z-index:7;width:40px;height:40px;border-radius:50%;
+  background:rgba(35,8,10,.35);border:1.5px solid var(--gold);color:var(--gold-soft);font-size:18px;
+  line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center}
+#musicBtn:active{transform:scale(.93)}
+#musicBtn.muted{opacity:.5}
+#swipeHint{position:fixed;top:68px;left:0;right:0;z-index:5;text-align:center;pointer-events:none;
+  color:#f3e3bb;font-family:Georgia,serif;font-size:13px;letter-spacing:.05em;
+  text-shadow:0 1px 6px rgba(0,0,0,.65)}
+#dots{position:fixed;right:10px;top:50%;transform:translateY(-50%);z-index:6;display:flex;
+  flex-direction:column;gap:10px;background:#f1e6cc;border-radius:999px;padding:13px 8px;
+  box-shadow:0 2px 10px rgba(0,0,0,.28)}
+#dots button{width:6px;height:6px;border-radius:50%;border:0;padding:0;cursor:pointer;
+  background:#7a2a2d;opacity:.5}
+#dots button.on{opacity:1;transform:scale(1.4)}
+#bookView{padding-top:60px}
+@media (max-width:640px){
+  #navbar a{font-size:12.5px}
+  #navbar .links{gap:18px}
+}
 /* ---------- loader ---------- */
 #loader{position:fixed;inset:0;z-index:40;background:var(--cream);display:flex;align-items:center;
   justify-content:center;flex-direction:column;gap:18px}
@@ -72,7 +82,7 @@ body{font-family:Georgia,'Times New Roman',serif;color:var(--cream);
 #rsvpWrap{position:fixed;inset:0;z-index:30;display:flex;align-items:center;justify-content:center;
   background:rgba(25,5,8,.6);backdrop-filter:blur(3px);padding:20px}
 #rsvpWrap[hidden]{display:none}
-.view[hidden],.topbar[hidden],.navbtn[hidden],.chrome[hidden]{display:none}
+.view[hidden],#navbar[hidden],#swipeHint[hidden],#dots[hidden]{display:none}
 #rsvpCard{background:linear-gradient(160deg,#fffdf6,var(--cream));color:var(--ink);border-radius:18px;
   max-width:380px;width:100%;padding:30px 26px 26px;text-align:center;position:relative;
   border:2px solid var(--gold);box-shadow:0 24px 70px rgba(0,0,0,.5)}
@@ -87,7 +97,7 @@ body{font-family:Georgia,'Times New Roman',serif;color:var(--cream);
   color:#9a7b52;cursor:pointer}
 /* ---------- social page: temple artwork bg + soft ivory wash ---------- */
 .socialpage{position:relative;margin:auto;max-width:100vw;max-height:100dvh;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
+  display:flex;flex-direction:column;align-items:center;justify-content:space-evenly;text-align:center;
   padding:34px 26px;gap:14px;overflow:hidden;color:var(--ink);
   background:url('assets/social-bg.jpg') center/contain no-repeat}
 .socialpage::before{content:"";position:absolute;inset:0;pointer-events:none;
@@ -147,13 +157,22 @@ body{font-family:Georgia,'Times New Roman',serif;color:var(--cream);
   </div>
 </main>
 
-<div class="topbar" id="topbar" hidden>
-  <button class="pillbtn" id="homeBtn">⌂ Home</button>
-  <button class="pillbtn" id="muteBtn" aria-label="Mute music">♪ Mute</button>
-</div>
-<button class="navbtn" id="prevBtn" hidden aria-label="Previous page">‹</button>
-<button class="navbtn" id="nextBtn" hidden aria-label="Next page">›</button>
-<nav class="chrome" id="dots" hidden aria-label="Pages"></nav>
+<header id="navbar" hidden>
+  <nav class="links" aria-label="Sections">
+    <a data-go="home">Home</a>
+    <a data-go="0">Grah Shanti</a>
+    <a data-go="1">Haldi</a>
+    <a data-go="2">Sangeet</a>
+    <a data-go="3">Baraat</a>
+    <a data-go="4">Wedding</a>
+    <a data-go="5">Families</a>
+    <a data-go="6">Social Media</a>
+    <a data-go="7">RSVP</a>
+  </nav>
+</header>
+<button id="musicBtn" aria-label="Mute background music">♪</button>
+<div id="swipeHint" hidden>Swipe or scroll to explore</div>
+<nav id="dots" hidden aria-label="Pages"></nav>
 
 <!-- RSVP dialog -->
 <div id="rsvpWrap" hidden>
@@ -180,8 +199,8 @@ var COVER_AR=1118/2047;
 var PAGES=[
  {img:"assets/grah-shanti.jpg", webp:"assets/grah-shanti.webp", amb:"assets/amb-grah-shanti.jpg",
   ar:1136/1899, label:"Grah Shanti",
-  hs:[{b:[33,53.8,34,4.2], href:MAP_TULSI_BANQUET},
-      {b:[40.5,58.0,19,3.2], href:MAP_TULSI_BANQUET}]},
+  hs:[{b:[39,57.3,32,6], href:MAP_TULSI_BANQUET},
+      {b:[44,62.7,21,4.2], href:MAP_TULSI_BANQUET}]},
  {img:"assets/haldi.jpg", webp:"assets/haldi.webp", amb:"assets/amb-haldi.jpg",
   ar:1136/1894, label:"Haldi",
   hs:[{b:[36.7,53.3,31.1,10.2], href:MAP_TULSI_BANQUET}]},
@@ -193,8 +212,8 @@ var PAGES=[
   hs:[{b:[39.5,41.1,19.5,8.0], href:MAP_HOME}]},
  {img:"assets/wedding-ceremony.jpg", webp:"assets/wedding-ceremony.webp", amb:"assets/amb-wedding-ceremony.jpg",
   ar:1136/1899, label:"Wedding Ceremony",
-  hs:[{b:[34,59.8,32,2.5], href:MAP_FARM},
-      {b:[40.5,61.8,19,3.2], href:MAP_FARM}]},
+  hs:[{b:[33.5,60,41,3], href:MAP_FARM},
+      {b:[46,62.5,19,3.6], href:MAP_FARM}]},
  {img:"assets/our-families.jpg", webp:"assets/our-families.webp", amb:"assets/amb-our-families.jpg",
   ar:1136/1894, label:"Our Families", hs:[]},
  {custom:"social", amb:"assets/amb-social-bg.jpg", ar:1344/1728, label:"Social Media"},
@@ -219,16 +238,20 @@ var ambient=$("ambient"), loader=$("loader"),
     coverView=$("coverView"), bookView=$("bookView"),
     pageFig=$("pageFig"), pageImg=$("pageImg"), hotspotBox=$("hotspots"),
     socialPage=$("socialPage"), dots=$("dots"),
-    prevBtn=$("prevBtn"), nextBtn=$("nextBtn"),
-    topbar=$("topbar"), homeBtn=$("homeBtn"), muteBtn=$("muteBtn"),
+    navbar=$("navbar"), musicBtn=$("musicBtn"), swipeHint=$("swipeHint"),
     rsvpWrap=$("rsvpWrap"), music=$("music"),
     sideL=$("coverSideL"), sideR=$("coverSideR");
 
 var idx=0, opened=false, muted=false, wasPlaying=false;
 
 /* fit a shrink-wrapped frame to the viewport for a given aspect ratio */
-function fitFrame(el, ar){
-  var vw=window.innerWidth, vh=window.innerHeight, w, h;
+var NAV_H=60;
+function fitSocial(availH){
+  socialPage.style.width=window.innerWidth+"px";
+  socialPage.style.height=availH+"px";
+}
+function fitFrame(el, ar, vh){
+  var vw=window.innerWidth; vh=vh||window.innerHeight; var w, h;
   if(vw/vh > ar){ h=vh; w=vh*ar; } else { w=vw; h=vw/ar; }
   el.style.width=w+"px"; el.style.height=h+"px";
 }
@@ -246,9 +269,9 @@ function layoutCoverSides(){
 }
 function fitAll(){
   fitFrame($("coverFig"), COVER_AR);
-  var p=PAGES[idx];
-  if(p.custom){ fitFrame(socialPage, p.ar); }
-  else { fitFrame(pageFig, p.ar); }
+  var p=PAGES[idx], availH=window.innerHeight-NAV_H;
+  if(p.custom){ fitSocial(availH); }
+  else { fitFrame(pageFig, p.ar, availH); }
   layoutCoverSides();
 }
 window.addEventListener("resize", fitAll);
@@ -265,14 +288,35 @@ function setAmbient(src){
 /* ---------- dots ---------- */
 PAGES.forEach(function(p,i){
   var d=document.createElement("button");
-  d.setAttribute("aria-label", p.label);
+  d.setAttribute("aria-label","Page "+(i+2)+": "+p.label);
   d.addEventListener("click", function(){ go(i); });
   dots.appendChild(d);
 });
 function paintDots(){
   var ds=dots.children;
-  for(var i=0;i<ds.length;i++) ds[i].classList.toggle("on", i===idx);
+  for(var i=0;i<ds.length;i++){
+    ds[i].classList.toggle("on", i===idx);
+    if(i===idx) ds[i].setAttribute("aria-current","page");
+    else ds[i].removeAttribute("aria-current");
+  }
 }
+/* ---------- section nav bar ---------- */
+var navLinks=Array.prototype.slice.call(document.querySelectorAll("#navbar a"));
+function paintNav(){
+  navLinks.forEach(function(a){
+    var g=a.getAttribute("data-go"), on=(g!=="home" && +g===idx);
+    a.classList.toggle("on", on);
+    if(on) a.setAttribute("aria-current","page"); else a.removeAttribute("aria-current");
+  });
+  var cur=navbar.querySelector("a.on");
+  if(cur) cur.scrollIntoView({block:"nearest", inline:"center"});
+}
+navLinks.forEach(function(a){
+  a.addEventListener("click", function(){
+    var g=a.getAttribute("data-go");
+    if(g==="home") goHome(); else go(+g);
+  });
+});
 
 /* ---------- page render ---------- */
 var preloaded={};
@@ -295,7 +339,7 @@ function show(i){
   resetZoom();
   if(p.custom){
     pageFig.style.display="none"; socialPage.style.display="flex";
-    fitFrame(socialPage,p.ar); setAmbient(p.amb);
+    fitSocial(window.innerHeight-NAV_H); setAmbient(p.amb);
   }else{
     socialPage.style.display="none"; pageFig.style.display="block";
     fitFrame(pageFig,p.ar);
@@ -313,7 +357,7 @@ function show(i){
     });
   }
   paintDots();
-  prevBtn.disabled=(idx===0); nextBtn.disabled=(idx===PAGES.length-1);
+  paintNav();
   preload(idx+1); preload(idx-1);
 }
 var coolUntil=0;
@@ -332,8 +376,7 @@ function openInvite(){
   coverView.hidden=true;
   layoutCoverSides();
   bookView.hidden=false;
-  topbar.hidden=false; dots.hidden=false;
-  prevBtn.hidden=false; nextBtn.hidden=false;
+  navbar.hidden=false; dots.hidden=false; swipeHint.hidden=false;
   show(0);
   fitAll();
   /* start music on the user's tap gesture */
@@ -345,24 +388,20 @@ function openInvite(){
 function goHome(){
   opened=false; idx=0;
   try{ music.pause(); }catch(e){}
-  music.currentTime=0; wasPlaying=false;
-  bookView.hidden=true; topbar.hidden=true; dots.hidden=true;
-  prevBtn.hidden=true; nextBtn.hidden=true;
+  music.currentTime=0; wasPlaying=false; setMuted(false);
+  bookView.hidden=true; navbar.hidden=true; dots.hidden=true; swipeHint.hidden=true;
   closeRsvp();
   coverView.hidden=false;
   setAmbient("assets/amb-cover.jpg");
   fitAll();
 }
 $("coverOpen").addEventListener("click", function(e){ e.preventDefault(); openInvite(); });
-homeBtn.addEventListener("click", goHome);
 
 /* cover hotspot geometry over the baked-in "Click here to Open the Invite" button */
 (function(){ var c=$("coverOpen"); c.style.left="32%"; c.style.top="82.5%";
   c.style.width="37%"; c.style.height="7%"; })();
 
 /* ---------- controls ---------- */
-prevBtn.addEventListener("click", function(){ step(-1); });
-nextBtn.addEventListener("click", function(){ step(1); });
 document.addEventListener("keydown", function(e){
   if(!opened||!rsvpWrap.hidden) return;
   if(e.key==="ArrowRight") step(1);
@@ -438,10 +477,12 @@ touchTarget.addEventListener("touchend", function(){
 });
 
 /* ---------- music ---------- */
-muteBtn.addEventListener("click", function(){
-  muted=!muted; music.muted=muted;
-  muteBtn.textContent=muted?"✕ Muted":"♪ Mute";
-});
+function setMuted(m){
+  muted=m; music.muted=m;
+  musicBtn.classList.toggle("muted", m);
+  musicBtn.setAttribute("aria-label", m?"Unmute background music":"Mute background music");
+}
+musicBtn.addEventListener("click", function(){ setMuted(!muted); });
 document.addEventListener("visibilitychange", function(){
   if(document.hidden){ wasPlaying=!music.paused&&!muted; music.pause(); }
   else if(wasPlaying&&opened&&!muted){ music.play().catch(function(){}); }
